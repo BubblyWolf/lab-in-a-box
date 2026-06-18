@@ -20,6 +20,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         service: [api, worker, frontend]
     steps:
@@ -53,7 +54,7 @@ jobs:
           provenance: false
 
       - name: Trivy scan
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@v0.30.0
         with:
           image-ref: ${{ steps.image.outputs.name }}:${{ github.sha }}
           format: sarif
