@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pulse.fullname" . }}-redis
+  labels:
+    {{- include "pulse.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "pulse.fullname" . }}-redis
+    app.kubernetes.io/component: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "pulse.fullname" . }}-redis
+      app.kubernetes.io/component: redis
+  template:
+    metadata:
+      labels:
+        {{- include "pulse.labels" . | nindent 8 }}
+        app.kubernetes.io/name: {{ include "pulse.fullname" . }}-redis
+        app.kubernetes.io/component: redis
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        fsGroup: 999
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: redis
+              containerPort: {{ .Values.service.redis.port }}
+          livenessProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.resources.redis | nindent 12 }}

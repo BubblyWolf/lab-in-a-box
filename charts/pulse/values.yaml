@@ -1,0 +1,63 @@
+# Default values for pulse.
+# This is a best-effort chart; override as needed.
+
+# Note: Deploy to a namespace via `helm install -n <namespace> --create-namespace`
+
+replicaCount:
+  api: 1
+  worker: 2
+  frontend: 1
+
+image:
+  api:
+    repository: ghcr.io/bubblywolf/pulse-api
+    tag: latest
+    pullPolicy: IfNotPresent
+  worker:
+    repository: ghcr.io/bubblywolf/pulse-worker
+    tag: latest
+    pullPolicy: IfNotPresent
+  frontend:
+    repository: ghcr.io/bubblywolf/pulse-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+
+service:
+  api:
+    port: 3001
+  worker:
+    port: 3002
+  frontend:
+    port: 3000
+  redis:
+    port: 6379
+
+resources:
+  api:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  worker:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  frontend:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  redis:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi

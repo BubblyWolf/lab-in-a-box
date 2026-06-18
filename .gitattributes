@@ -1,0 +1,12 @@
+# Normalize all text files to LF in the repo (Linux/CI safe)
+* text=auto eol=lf
+
+# Scripts and manifests must be LF
+*.sh    text eol=lf
+*.yaml  text eol=lf
+*.yml   text eol=lf
+Makefile text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary

@@ -1,0 +1,16 @@
+# This pod VIOLATES the Kyverno policies. Applying it should be BLOCKED (privileged + root).
+# Try: kubectl apply -f security/examples/bad-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod
+  namespace: default
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      securityContext:
+        privileged: true
+        runAsUser: 0
+      ports:
+        - containerPort: 80

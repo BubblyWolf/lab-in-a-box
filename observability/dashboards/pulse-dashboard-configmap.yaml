@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pulse-dashboard
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  pulse.json: |
+    {
+      "title": "Pulse — Demo App",
+      "schemaVersion": 39,
+      "templating": {
+        "list": [
+          {
+            "name": "datasource",
+            "type": "datasource",
+            "query": "prometheus",
+            "current": {},
+            "hide": 0,
+            "label": "Data source"
+          }
+        ]
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Job Rate",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "targets": [
+            {
+              "expr": "rate(pulse_jobs_submitted_total[1m])",
+              "legendFormat": "Submitted"
+            },
+            {
+              "expr": "rate(pulse_jobs_processed_total[1m])",
+              "legendFormat": "Processed"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Total Submitted",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "targets": [
+            {
+              "expr": "pulse_jobs_submitted_total"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Total Processed",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 12, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "targets": [
+            {
+              "expr": "pulse_jobs_processed_total"
+            }
+          ]
+        }
+      ]
+    }

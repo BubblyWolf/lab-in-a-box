@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pulse
+version: 0.1.0
+appVersion: 1.0.0
+description: Pulse demo app for lab-in-a-box - 3 microservices with Redis
+type: application

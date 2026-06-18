@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "pulse.fullname" . }}-redis
+  labels:
+    {{- include "pulse.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "pulse.fullname" . }}-redis
+    app.kubernetes.io/component: redis
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ include "pulse.fullname" . }}-redis
+    app.kubernetes.io/component: redis
+  ports:
+    - name: redis
+      port: {{ .Values.service.redis.port }}
+      targetPort: redis
+      protocol: TCP

@@ -1,0 +1,14 @@
+{
+  "name": "@lab-in-a-box/pulse-worker",
+  "version": "1.0.0",
+  "description": "Pulse demo worker service",
+  "main": "worker.js",
+  "scripts": {
+    "start": "node worker.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "redis": "^4.6.0",
+    "prom-client": "^15.0.0"
+  }
+}
