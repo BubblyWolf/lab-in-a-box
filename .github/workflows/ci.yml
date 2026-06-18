@@ -53,15 +53,20 @@ jobs:
             ${{ steps.image.outputs.name }}:${{ github.sha }}
           provenance: false
 
-      - name: Trivy scan
-        uses: aquasecurity/trivy-action@v0.30.0
-        with:
-          image-ref: ${{ steps.image.outputs.name }}:${{ github.sha }}
-          format: sarif
-          output: trivy-${{ matrix.service }}.sarif
-          severity: HIGH,CRITICAL
-          exit-code: '0'
-          ignore-unfixed: true
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+          trivy --version
+
+      - name: Trivy scan (report-only, results to Security tab)
+        run: |
+          trivy image \
+            --format sarif \
+            --output trivy-${{ matrix.service }}.sarif \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --exit-code 0 \
+            ${{ steps.image.outputs.name }}:${{ github.sha }}
 
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v3
