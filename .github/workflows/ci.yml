@@ -37,10 +37,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Compute image name
+      - name: Compute image name (lowercased — registries require lowercase)
         id: image
+        env:
+          OWNER: ${{ github.repository_owner }}
         run: |
-          echo "name=ghcr.io/${{ github.repository_owner }}/pulse-${{ matrix.service }}" >> "$GITHUB_OUTPUT"
+          echo "name=ghcr.io/${OWNER,,}/pulse-${{ matrix.service }}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
         id: build
