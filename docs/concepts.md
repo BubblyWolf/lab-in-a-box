@@ -139,6 +139,8 @@ You'll practice with two real applications:
 
 You'll deploy Pulse to understand. You'll deploy Navidrome to *use* — and maybe never leave.
 
+And remember: **Navidrome is just one example.** Once you can deploy it, you can deploy almost any open-source app the same way — your own Netflix (Jellyfin), your own Google Drive (Nextcloud), your own GitHub (Gitea), and more. See [apps you can run](apps-you-can-run.md) for the full menu.
+
 ---
 
 ## 📚 Plain-English glossary

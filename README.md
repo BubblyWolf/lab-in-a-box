@@ -217,6 +217,8 @@ make music          # deploys Navidrome → opens http://localhost:4533
 
 It's deployed the same GitOps way as everything else, and configured to **run as non-root so it passes the Kyverno security policies** — a real lesson in deploying real apps securely. Because you supply your own music, it's completely legal to use and keep.
 
+> 🧩 **Navidrome is just one example.** The same pattern runs almost any open-source app — Jellyfin (your own Netflix), Nextcloud (your own Drive), Gitea (your own GitHub), Uptime Kuma, and more. See **[docs/apps-you-can-run.md](docs/apps-you-can-run.md)** for a catalog and how to deploy any of them.
+
 ---
 
 ## 🗺️ Repo layout
