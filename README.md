@@ -147,7 +147,22 @@ make demo
 | **Observability** | Prometheus + Grafana + Loki + a custom "Pulse" dashboard | Metrics and logs in one place, auto-scraped via pod annotations |
 | **Security** | Kyverno + Sealed Secrets + Trivy Operator | Policy enforcement at admission, encrypted secrets in Git, image scanning |
 | **CI/CD** | GitHub Actions (build, Trivy scan, SBOM, cosign sign) | Reproducible builds with supply-chain security artifacts |
-| **Demo App** | Pulse — Node.js API + worker + frontend + Redis | Real microservices with a Redis job queue, `/metrics`, and `/healthz` |
+| **Demo App** | Pulse — Node.js API + worker + frontend + Redis | Training-wheels app: built in-house so you can see every moving part |
+| **Real App** | Navidrome — self-hosted music server | The "your own Spotify" you actually keep — deployed via Helm + GitOps, runs non-root to pass our security policies |
+
+---
+
+## 🎓 Learn & teach
+
+This isn't just code to deploy — it's built to **learn from**, with everything explained in plain English (no Kubernetes background needed).
+
+| If you're a... | Start here |
+|----------------|-----------|
+| 🌱 **Curious beginner** (any background) | [docs/concepts.md](docs/concepts.md) — every tool explained as a simple story |
+| 🧑‍💻 **Student / hands-on learner** | [docs/walkthrough.md](docs/walkthrough.md) then the [labs](docs/labs/) — guided exercises that build real skill |
+| 🧑‍🏫 **Teacher / workshop host** | [docs/course/](docs/course/) — a ready-to-teach 5-module curriculum with demo scripts and exercises |
+
+> New to all this? The whole stack is explained with a **restaurant story** — if you can follow a recipe, you can follow this.
 
 ---
 
@@ -190,19 +205,34 @@ Metrics are scraped automatically from any pod carrying the `prometheus.io/scrap
 
 ---
 
+## 🎵 Bonus: run your own music server
+
+One command deploys [Navidrome](https://www.navidrome.org/) — a self-hosted, open-source music server ("your own Spotify"). Add your own music and stream it from anywhere.
+
+```bash
+make music          # deploys Navidrome → opens http://localhost:4533
+```
+
+![Navidrome running on lab-in-a-box](docs/images/navidrome-library.png)
+
+It's deployed the same GitOps way as everything else, and configured to **run as non-root so it passes the Kyverno security policies** — a real lesson in deploying real apps securely. Because you supply your own music, it's completely legal to use and keep.
+
+---
+
 ## 🗺️ Repo layout
 
 ```
 lab-in-a-box/
-├── Makefile                 # make up / down / status / demo / deploy-local / build-load
+├── Makefile                 # make up / down / status / demo / deploy-local / music / build-load
 ├── bootstrap/               # Kind cluster config, install.sh, build-images.sh
 ├── apps/demo/               # Pulse app source: api/ worker/ frontend/ (+ Dockerfiles)
 ├── charts/pulse/            # Helm chart that deploys Pulse + Redis
+├── charts/navidrome/        # Helm chart for the Navidrome music server
 ├── gitops/                  # Argo CD manifests (root app + app-of-apps)
 ├── observability/           # Grafana dashboard ConfigMap
 ├── security/                # Kyverno policies, bad-pod example, docs
 ├── .github/workflows/       # CI (build/scan/sign) + Validate (lint/smoke)
-└── docs/                    # Architecture, runbook, launch post
+└── docs/                    # concepts (stories) · walkthrough · labs · course · architecture · runbook
 ```
 
 ---

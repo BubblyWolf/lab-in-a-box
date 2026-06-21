@@ -1,0 +1,6 @@
+apiVersion: v2
+name: navidrome
+description: "Navidrome self-hosted music server for lab-in-a-box"
+type: application
+version: 0.1.0
+appVersion: "0.53.3"

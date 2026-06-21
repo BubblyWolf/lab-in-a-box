@@ -14,9 +14,8 @@ Common commands, troubleshooting, and day-2 operations for `lab-in-a-box`.
 | `make status` | Show cluster health, pod status, and port-forward status |
 | `make demo` | Open Argo CD, Grafana, and Pulse frontend in browser |
 | `make deploy-local` | Deploy Pulse app from local path (no Git push needed) |
-| `make deploy-gitops` | Deploy Pulse app from Git repo (requires pushed repo) |
-| `make test` | Run smoke tests against Pulse API |
-| `make lint` | Validate all Kubernetes manifests and Helm charts |
+| `make music` | Deploy Navidrome (your own music server) and open it |
+| `make build-load` | Build the Pulse images and load them into the cluster |
 
 ---
 

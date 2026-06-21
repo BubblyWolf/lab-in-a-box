@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "navidrome.fullname" . }}
+  labels:
+    {{- include "navidrome.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "navidrome.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "navidrome.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        fsGroup: {{ .Values.securityContext.fsGroup }}
+      {{- if .Values.sampleMusic.enabled }}
+      initContainers:
+        - name: download-sample-music
+          image: curlimages/curl:8.10.1
+          securityContext:
+            runAsUser: {{ .Values.securityContext.runAsUser }}
+            runAsGroup: {{ .Values.securityContext.runAsGroup }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              {{- range .Values.sampleMusic.urls }}
+              curl -L -o /music/{{ base . }} "{{ . }}"
+              {{- end }}
+          volumeMounts:
+            - name: music
+              mountPath: /music
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ND_MUSICFOLDER
+              value: {{ .Values.env.ND_MUSICFOLDER | quote }}
+            - name: ND_DATAFOLDER
+              value: {{ .Values.env.ND_DATAFOLDER | quote }}
+            - name: ND_SCANSCHEDULE
+              value: {{ .Values.env.ND_SCANSCHEDULE | quote }}
+            - name: ND_LOGLEVEL
+              value: {{ .Values.env.ND_LOGLEVEL | quote }}
+            - name: ND_PORT
+              value: {{ .Values.env.ND_PORT | quote }}
+            - name: ND_SESSIONTIMEOUT
+              value: {{ .Values.env.ND_SESSIONTIMEOUT | quote }}
+          ports:
+            - name: http
+              containerPort: 4533
+              protocol: TCP
+          volumeMounts:
+            - name: music
+              mountPath: /music
+            - name: data
+              mountPath: /data
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            failureThreshold: 30
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: music
+          {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "navidrome.fullname" . }}-music
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: data
+          {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "navidrome.fullname" . }}-data
+          {{- else }}
+          emptyDir: {}
+          {{- end }}

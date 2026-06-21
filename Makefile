@@ -12,7 +12,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m # No Color
 
-.PHONY: help up down status demo build-load deploy-local
+.PHONY: help up down status demo build-load deploy-local music
 
 help: ## Show this help message
 	@echo ""
@@ -64,6 +64,17 @@ deploy-local: check-tools ## 📦 Install the Pulse chart directly via Helm (no 
 	@echo "📦 Installing Pulse chart into namespace 'pulse' (local, non-GitOps)..."
 	@helm upgrade --install pulse charts/pulse --namespace pulse --create-namespace
 	@echo "$(GREEN)✓ Pulse deployed.$(NC) Run '$(YELLOW)make demo$(NC)' for access info."
+
+music: check-tools ## 🎵 Deploy Navidrome (your own music server) and open it
+	@echo "🎵 Deploying Navidrome into namespace 'media'..."
+	@helm upgrade --install navidrome charts/navidrome --namespace media --create-namespace
+	@kubectl rollout status deploy/navidrome -n media --timeout=180s
+	@echo ""
+	@echo "$(GREEN)✓ Navidrome is ready!$(NC)"
+	@echo "   Open $(YELLOW)http://localhost:4533$(NC) — create your admin account, then add your music."
+	@echo "   (Tip: enable demo tracks with: helm upgrade navidrome charts/navidrome -n media --set sampleMusic.enabled=true --set 'sampleMusic.urls={<mp3-url>}')"
+	@echo ""
+	@kubectl port-forward svc/navidrome -n media 4533:4533
 
 down: check-tools ## 💥 Delete the kind cluster
 	@echo ""
