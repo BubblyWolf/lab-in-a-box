@@ -8,6 +8,17 @@ replicaCount:
   worker: 2
   frontend: 1
 
+# Autoscaling: the "why Kubernetes" demo. When enabled, the worker scales
+# automatically based on CPU. Flood the app with jobs (make load) and watch
+# Kubernetes add worker pods, then remove them when the load drops.
+# Requires metrics-server in the cluster (installed by `make up`).
+autoscaling:
+  worker:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 60
+
 image:
   api:
     repository: ghcr.io/bubblywolf/pulse-api

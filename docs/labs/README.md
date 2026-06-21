@@ -38,7 +38,8 @@ make down
 | 02 | [Watch Kubernetes heal itself](02-scale-and-heal.md) | 🟢 easy | 20 min | Self-healing, scaling, and how Deployments work |
 | 03 | [Meet the security guard](03-security-guard.md) | 🟡 medium | 25 min | Kyverno policies, blocked pods, writing compliant manifests |
 | 04 | [Deploy your own music app](04-deploy-your-music.md) | 🟡 medium | 30 min | Run Navidrome, add music, keep a real app |
-| 05 | [Become a detective with logs](05-read-the-logs.md) | ── medium | 25 min | Read pod logs, correlate actions with output, explore Grafana |
+| 05 | [Become a detective with logs](05-read-the-logs.md) | 🟡 medium | 25 min | Read pod logs, correlate actions with output, explore Grafana |
+| 06 | [Watch Kubernetes scale your app](06-autoscaling.md) | 🟡 medium | 25 min | Autoscaling under load — the "why Kubernetes vs Docker" moment |
 
 ## Stuck or curious?
 

@@ -12,7 +12,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m # No Color
 
-.PHONY: help up down status demo build-load deploy-local music
+.PHONY: help up down status demo build-load deploy-local music load watch
 
 help: ## Show this help message
 	@echo ""
@@ -64,6 +64,20 @@ deploy-local: check-tools ## 📦 Install the Pulse chart directly via Helm (no 
 	@echo "📦 Installing Pulse chart into namespace 'pulse' (local, non-GitOps)..."
 	@helm upgrade --install pulse charts/pulse --namespace pulse --create-namespace
 	@echo "$(GREEN)✓ Pulse deployed.$(NC) Run '$(YELLOW)make demo$(NC)' for access info."
+
+load: check-tools ## 🔥 Flood Pulse with jobs to trigger autoscaling (then run 'make watch')
+	@kubectl -n pulse delete job pulse-load --ignore-not-found >/dev/null 2>&1 || true
+	@kubectl apply -f scripts/load-job.yaml
+	@echo ""
+	@echo "$(GREEN)✓ Load generator running.$(NC) In another terminal run '$(YELLOW)make watch$(NC)'"
+	@echo "  to watch Kubernetes scale the worker from 2 pods up to 10 — and back down when it's done."
+
+watch: check-tools ## 👀 Watch the worker autoscale live (HPA + worker pods)
+	@echo "📊 Autoscaler status:"
+	@kubectl get hpa -n pulse 2>/dev/null || echo "  (no HPA — is Pulse deployed?)"
+	@echo ""
+	@echo "👀 Watching worker pods (Ctrl+C to stop)..."
+	@kubectl get pods -n pulse -l app.kubernetes.io/component=worker -w
 
 music: check-tools ## 🎵 Deploy Navidrome (your own music server) and open it
 	@echo "🎵 Deploying Navidrome into namespace 'media'..."

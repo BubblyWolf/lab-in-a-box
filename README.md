@@ -205,6 +205,22 @@ Metrics are scraped automatically from any pod carrying the `prometheus.io/scrap
 
 ---
 
+## ⚡ Why Kubernetes (and not just Docker)?
+
+Most self-hosted apps run fine on plain Docker. Kubernetes earns its complexity when an app must **scale and heal itself**. This lab shows it for real:
+
+```bash
+make deploy-local   # deploy Pulse (worker starts at 2 pods)
+make load           # flood it with thousands of jobs
+make watch          # watch Kubernetes add worker pods automatically
+```
+
+![Pulse autoscaling from 2 to 10 worker pods under load](docs/images/autoscaling.png)
+
+Under load, the worker's CPU spiked and the **HorizontalPodAutoscaler grew it from 2 → 10 pods on its own** — then scales back down when the rush ends. No human touched it. *That's* the thing Docker can't do, and it's the skill companies actually pay for. Try it yourself in **[Lab 06](docs/labs/06-autoscaling.md)**.
+
+---
+
 ## 🎵 Bonus: run your own music server
 
 One command deploys [Navidrome](https://www.navidrome.org/) — a self-hosted, open-source music server ("your own Spotify"). Add your own music and stream it from anywhere.

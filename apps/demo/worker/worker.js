@@ -1,10 +1,23 @@
 const express = require('express');
 const redis = require('redis');
 const client = require('prom-client');
+const crypto = require('crypto');
 
 // Config
 const PORT = process.env.PORT || 3002;
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+// How much real CPU work each job costs (ms). This is what drives autoscaling:
+// under a flood of jobs, worker CPU rises and the HPA adds more worker pods.
+const WORK_CPU_MS = parseInt(process.env.WORK_CPU_MS || '120', 10);
+
+// Burn CPU for ~ms by hashing in a tight loop (real work, not a sleep).
+function burnCpu(ms) {
+  const end = Date.now() + ms;
+  let h = '0';
+  while (Date.now() < end) {
+    h = crypto.createHash('sha256').update(h).digest('hex');
+  }
+}
 
 // Prometheus metrics
 const register = new client.Registry();
@@ -52,8 +65,10 @@ async function start() {
         const job = JSON.parse(result.element);
         console.log(`Processing job: ${job.id} (type: ${job.type})`);
 
-        // Simulate work
-        await new Promise(r => setTimeout(r, 100 + Math.random() * 400));
+        // Do real CPU work for this job (drives autoscaling under load)...
+        burnCpu(WORK_CPU_MS);
+        // ...then yield briefly so the /healthz + /metrics endpoints stay responsive.
+        await new Promise(r => setTimeout(r, 20));
 
         await redisClient.incr('jobs:processed');
         jobsProcessed.inc();

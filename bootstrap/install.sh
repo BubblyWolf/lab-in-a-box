@@ -24,6 +24,17 @@ echo -e "  ${GREEN}✓${NC} All nodes are Ready"
 echo -e ""
 
 # ─────────────────────────────────────────────────────────
+# Step 1b: Install metrics-server (needed for autoscaling / HPA)
+# Kind nodes use self-signed kubelet certs, so we add --kubelet-insecure-tls.
+# ─────────────────────────────────────────────────────────
+echo -e "📈 Installing metrics-server (powers autoscaling)..."
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml >/dev/null
+kubectl patch deployment metrics-server -n kube-system --type=json \
+  -p '[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]' >/dev/null 2>&1 || true
+echo -e "  ${GREEN}✓${NC} metrics-server installed"
+echo -e ""
+
+# ─────────────────────────────────────────────────────────
 # Step 2: Install Argo CD (idempotent)
 # ─────────────────────────────────────────────────────────
 echo -e "🔧 Installing Argo CD..."
